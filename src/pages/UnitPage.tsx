@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Target } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { XPDisplay } from '@/components/XPDisplay';
-import { LessonCard } from '@/components/LessonCard';
+import { LessonPathNode } from '@/components/LessonPathNode';
+import { UnitHeader } from '@/components/UnitHeader';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { getUnitById, getLessonsByUnit } from '@/lib/mockData';
 
@@ -27,13 +27,8 @@ export default function UnitPage() {
     );
   }
 
-  // Calculate completed lessons
-  const completedCount = lessons.filter(l => isLessonCompleted(l.id)).length;
-  const unitProgress = (completedCount / lessons.length) * 100;
-
   // Find current lesson (first incomplete)
-  const currentLessonIndex = lessons.findIndex(l => !isLessonCompleted(l.id));
-  const currentLesson = lessons[currentLessonIndex];
+  const currentLesson = lessons.find(l => !isLessonCompleted(l.id));
 
   return (
     <div className="min-h-screen bg-background pb-8">
@@ -48,44 +43,21 @@ export default function UnitPage() {
         </div>
       </header>
 
-      <main className="px-4 py-6 space-y-6">
-        {/* Unit Header */}
-        <div>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-14 h-14 rounded-2xl bg-primary-light flex items-center justify-center text-2xl">
-              {unit.icon}
-            </div>
-            <div>
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                Unit {unit.order}
-              </p>
-              <h1 className="text-xl font-black">{unit.name}</h1>
-            </div>
-          </div>
-          <p className="text-muted-foreground">{unit.description}</p>
-        </div>
+      <main className="px-4 py-6 space-y-8">
+        {/* Unit Header Card */}
+        <UnitHeader 
+          unit={unit} 
+          unitNumber={unit.order}
+          onGuidebook={() => {}}
+        />
 
-        {/* Progress Card */}
-        <div className="bg-card rounded-2xl border border-border p-5">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-primary" />
-              <span className="font-medium">Unit Progress</span>
-            </div>
-            <span className="text-sm font-bold text-primary">
-              {completedCount}/{lessons.length}
-            </span>
-          </div>
-          <Progress value={unitProgress} className="h-3" />
-        </div>
-
-        {/* Lessons List */}
-        <section>
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <BookOpen className="w-5 h-5" />
-            Lessons
-          </h2>
-          <div className="space-y-3">
+        {/* Lesson Path */}
+        <div className="relative py-8">
+          {/* Connecting line */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-muted -translate-x-1/2 z-0" />
+          
+          {/* Lesson nodes */}
+          <div className="relative z-10 space-y-8">
             {lessons.map((lesson, index) => {
               const isCompleted = isLessonCompleted(lesson.id);
               const isCurrent = lesson.id === currentLesson?.id;
@@ -93,21 +65,22 @@ export default function UnitPage() {
               const isLocked = index > 0 && !isLessonCompleted(lessons[index - 1].id);
 
               return (
-                <LessonCard
+                <LessonPathNode
                   key={lesson.id}
                   lesson={lesson}
                   isCompleted={isCompleted}
                   isLocked={isLocked}
                   isCurrent={isCurrent}
+                  index={index}
                   onClick={() => navigate(`/lesson/${lesson.id}`)}
                 />
               );
             })}
           </div>
-        </section>
+        </div>
 
         {/* Unit Review Button (appears when all lessons completed) */}
-        {unitProgress === 100 && (
+        {lessons.every(l => isLessonCompleted(l.id)) && (
           <Button 
             size="lg" 
             variant="success" 
