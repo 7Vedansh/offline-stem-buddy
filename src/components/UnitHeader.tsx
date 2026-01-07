@@ -35,7 +35,7 @@ export function UnitHeader({ unit, unitNumber, onGuidebook }: UnitHeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.4 }}
           >
-            {unit.title}
+            {unit.name}
           </motion.h1>
           
           {/* Description */}
