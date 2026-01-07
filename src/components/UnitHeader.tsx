@@ -1,5 +1,7 @@
 import { BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import type { Unit } from '@/lib/mockData';
 
 interface UnitHeaderProps {
@@ -10,47 +12,62 @@ interface UnitHeaderProps {
 
 export function UnitHeader({ unit, unitNumber, onGuidebook }: UnitHeaderProps) {
   return (
-    <motion.div 
-      className="bg-primary rounded-2xl p-4 shadow-lg"
-      initial={{ opacity: 0, y: -20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.4, type: "spring", stiffness: 300, damping: 25 }}
+    <motion.div
+      initial={{ opacity: 0, y: -16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      <div className="flex items-center justify-between">
-        <div className="text-white">
-          <motion.h2 
-            className="font-black text-lg"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            Unit {unitNumber}
-          </motion.h2>
-          <motion.p 
-            className="text-primary-foreground/90 text-sm font-medium"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            {unit.name}
-          </motion.p>
-        </div>
+      <Card className="gradient-primary text-primary-foreground p-7 relative overflow-hidden border-0 shadow-lg">
+        {/* Background decorations */}
+        <div className="absolute -right-8 -top-8 w-36 h-36 bg-primary-foreground/10 rounded-full blur-sm" />
+        <div className="absolute right-12 top-12 w-20 h-20 bg-primary-foreground/10 rounded-full" />
         
-        {onGuidebook && (
-          <motion.button
-            onClick={onGuidebook}
-            className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl font-bold text-sm transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, type: "spring" }}
+        <div className="relative z-10">
+          {/* Unit badge */}
+          <div className="inline-block bg-primary-foreground/15 backdrop-blur-sm rounded-xl px-4 py-1.5 mb-4">
+            <span className="text-sm font-bold tracking-wide">Unit {unitNumber}</span>
+          </div>
+          
+          {/* Title */}
+          <motion.h1 
+            className="text-2xl font-extrabold mb-2 tracking-tight"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.4 }}
           >
-            <BookOpen className="w-4 h-4" />
-            GUIDEBOOK
-          </motion.button>
-        )}
-      </div>
+            {unit.title}
+          </motion.h1>
+          
+          {/* Description */}
+          <motion.p 
+            className="text-primary-foreground/85 text-base font-medium mb-6 leading-relaxed"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.22, duration: 0.4 }}
+          >
+            {unit.description}
+          </motion.p>
+          
+          {/* Guidebook button */}
+          {onGuidebook && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="bg-primary-foreground/15 border-primary-foreground/25 text-primary-foreground hover:bg-primary-foreground/25 hover:text-primary-foreground font-semibold"
+                onClick={onGuidebook}
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Guidebook</span>
+              </Button>
+            </motion.div>
+          )}
+        </div>
+      </Card>
     </motion.div>
   );
 }
