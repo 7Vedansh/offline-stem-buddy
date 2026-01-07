@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { XPDisplay } from '@/components/XPDisplay';
@@ -53,8 +54,13 @@ export default function UnitPage() {
 
         {/* Lesson Path */}
         <div className="relative py-8">
-          {/* Connecting line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-muted -translate-x-1/2 z-0" />
+          {/* Connecting line with animation */}
+          <motion.div 
+            className="absolute left-1/2 top-0 w-1 bg-gradient-to-b from-muted via-muted to-muted/50 -translate-x-1/2 z-0 rounded-full"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: '100%', opacity: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          />
           
           {/* Lesson nodes */}
           <div className="relative z-10 space-y-8">
@@ -81,14 +87,20 @@ export default function UnitPage() {
 
         {/* Unit Review Button (appears when all lessons completed) */}
         {lessons.every(l => isLessonCompleted(l.id)) && (
-          <Button 
-            size="lg" 
-            variant="success" 
-            className="w-full"
-            onClick={() => navigate(`/review/${unitId}`)}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            🎉 Take Unit Review
-          </Button>
+            <Button 
+              size="lg" 
+              variant="success" 
+              className="w-full shadow-success"
+              onClick={() => navigate(`/review/${unitId}`)}
+            >
+              🎉 Take Unit Review
+            </Button>
+          </motion.div>
         )}
       </main>
     </div>
